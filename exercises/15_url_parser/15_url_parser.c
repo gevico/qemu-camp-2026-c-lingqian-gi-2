@@ -13,12 +13,12 @@ int parse_url(const char* url) {
     int err = 0;
     char *param_start = NULL;
     char *params = NULL;
-    char *token = NULL;
+    char *pair = NULL;
     char *key = NULL;
     char *value = NULL;
 
     // 检查输入URL是否为空
-    if (url == NULL) {
+    if (url == NULL || strlen(url) == 0) {
         err = EINVAL;
         goto exit;
     }
@@ -26,36 +26,32 @@ int parse_url(const char* url) {
     // 找到URL中参数部分的起始位置（?后面）
     param_start = strchr(url, '?');
     if (param_start == NULL) {
-        // 没有参数部分，直接返回
-        err = 0;
+        err = EINVAL; // 无参数部分
         goto exit;
     }
-    param_start++; // 跳过?，指向参数起始位置
+    param_start++; // 跳过?符号，指向参数起始位置
 
-    // 复制参数字符串（strtok会修改原字符串，原URL是const不可修改）
+    // 复制参数部分（strtok会修改原字符串，需拷贝）
     params = strdup(param_start);
     if (params == NULL) {
-        err = ENOMEM;
+        err = ENOMEM; // 内存分配失败
         goto exit;
     }
 
-    // 按&分割参数，遍历所有key-value对
-    token = strtok(params, "&");
-    while (token != NULL) {
+    // 按&分割每个键值对
+    pair = strtok(params, "&");
+    while (pair != NULL) {
         // 按=分割key和value
-        key = strtok(token, "=");
-        value = strtok(NULL, "="); // value可能为空，需处理
-
-        // 输出键值对（兼容value为空的情况）
-        if (key != NULL) {
-            if (value == NULL) {
-                value = "";
-            }
+        key = strtok(pair, "=");
+        value = strtok(NULL, "=");
+        
+        // 确保key和value都有效
+        if (key != NULL && value != NULL) {
             printf("key = %s, value = %s\n", key, value);
         }
 
-        // 继续解析下一个参数
-        token = strtok(NULL, "&");
+        // 继续解析下一个键值对
+        pair = strtok(NULL, "&");
     }
 
 exit:

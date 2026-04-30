@@ -1,7 +1,8 @@
 #include <stdio.h>
-#include <stdlib.h> // 用于exit处理除零错误
+#include <stdlib.h>  // 用于处理除零错误时的exit函数
 
-// 实现四则运算函数
+// 定义四则运算规则
+// 处理除数为0的特殊情况
 int add(int a, int b) {
     return a + b;
 }
@@ -15,10 +16,9 @@ int multiply(int a, int b) {
 }
 
 int divide(int a, int b) {
-    // 处理除零错误
     if (b == 0) {
         printf("错误：除数不能为零\n");
-        exit(1); // 退出程序，也可返回特定值，需保证测试能检测到错误信息
+        exit(1);  // 终止程序，返回非0状态码
     }
     return a / b;
 }
@@ -27,8 +27,9 @@ int main() {
     int a, b;
     char op;
 
-    // 定义函数指针数组：类型为int (*)(int, int)，数组名operations
+    // 定义函数指针数组，元素类型为int (*)(int, int)
     int (*operations[])(int, int) = {add, subtract, multiply, divide};
+
     char operators[] = "+-*/";
 
     printf("输入两个整数和一个运算符 (+, -, *, /): ");

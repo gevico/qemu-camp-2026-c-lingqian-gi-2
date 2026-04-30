@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <ctype.h>
 
 /**
  * URL参数解析器
@@ -19,11 +18,13 @@ int parse_url(const char* url) {
     }
     query++; // 跳过 '?'
 
-    // 复制查询字符串，因为 strtok 会修改原字符串
-    char* query_copy = strdup(query);
+    // 复制查询字符串（使用标准C函数替代 strdup）
+    size_t len = strlen(query);
+    char* query_copy = (char*)malloc(len + 1);
     if (query_copy == NULL) {
         return -1;
     }
+    strcpy(query_copy, query);
 
     // 使用 strtok 按 '&' 分割参数
     char* token = strtok(query_copy, "&");

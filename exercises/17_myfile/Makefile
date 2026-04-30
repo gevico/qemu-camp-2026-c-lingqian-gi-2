@@ -7,10 +7,19 @@ OBJS := $(SRCS:.c=.o)
 
 all: $(TARGET)
 
-# TODO: 在这里添加你的代码
-# I AM NOT DONE
+# 编译可执行文件
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^
+
+# 编译目标文件
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
 	rm -f $(TARGET) $(OBJS)
 
-.PHONY: all clean
+.PHONY: all clean run
+
+# 新增run目标，方便测试
+run: all
+	./$(TARGET)

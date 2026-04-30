@@ -7,8 +7,13 @@ OBJS := $(SRCS:.c=.o)
 
 all: $(TARGET)
 
-# TODO: 在这里添加你的代码
-# I AM NOT DONE
+# 编译可执行文件
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^
+
+# 编译目标文件（依赖头文件）
+%.o: %.c mywc.h
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
 	rm -f $(TARGET) $(OBJS)

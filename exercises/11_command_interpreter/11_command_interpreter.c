@@ -1,150 +1,117 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
+#include <stdlib.h>
 
-// 状态机状态定义
-typedef enum {
-    STATE_SPACE,    // 空格状态（等待参数开始）
-    STATE_TOKEN     // 字符状态（正在读取参数）
-} ParseState;
+#define MAX_ARGS 10
+#define MAX_INPUT_LENGTH 256
 
-/**
- * @brief 解析命令行字符串，分割为参数数组
- * @param input 输入命令行字符串（带换行/空格）
- * @param argv 输出参数数组（需提前分配足够空间）
- * @param max_argc 最大支持的参数个数
- * @return 实际解析出的参数个数
- */
-int shell_parse(const char *input, char *argv[], int max_argc) {
-    if (input == NULL || argv == NULL || max_argc <= 0) {
-        return 0;
+int shell_parse(char *buf, char *argv[]);
+void execute_command(int argc, char *argv[]);
+
+// in:  format -> hello world "hello world" 1234567
+// Multiple command parameters entered from the command line (number of parameters does not exceed 10)
+// out:  format -> Parameter X: Content, Length: X
+// Parse the command parameters through a character pointer array, and sequentially display the content and length of each parameter on the screen
+//
+int main(void)
+{
+    FILE *file;
+    char input[MAX_INPUT_LENGTH];
+    char *argv[MAX_ARGS + 1] = {NULL};
+    int argc = 0;
+
+    file = fopen("command_file.txt", "r");
+    if (!file) {
+        fprintf(stderr, "❌ Error: Cannot open input file '%s'\n", "command_file.txt");
+        return 1;
     }
 
-    ParseState state = STATE_SPACE;
-    int argc = 0;          // 已解析的参数个数
-    int current_pos = 0;   // 当前参数的字符位置
-    int input_len = strlen(input);
+    printf("✅ Reading commands from '%s':\n\n", "command_file.txt");
 
-    // 遍历输入字符串（跳过末尾换行符）
-    for (int i = 0; i < input_len; i++) {
-        char c = input[i];
+    while (fgets(input, MAX_INPUT_LENGTH, file) != NULL) {
+        input[strcspn(input, "\n")] = '\0';
 
-        // 跳过换行符（测试用例包含\n）
-        if (c == '\n' || c == '\0') {
-            break;
+        if (strlen(input) == 0 || strspn(input, " \t") == strlen(input)) {
+            continue;
         }
 
-        switch (state) {
-            case STATE_SPACE:
-                // 非空格字符：开始新参数
-                if (!isspace(c)) {
-                    if (argc >= max_argc) {
-                        break; // 超出最大参数数，忽略后续
-                    }
-                    argv[argc] = (char *)malloc(128 * sizeof(char)); // 每个参数最大128字符
-                    current_pos = 0;
-                    argv[argc][current_pos++] = c;
-                    state = STATE_TOKEN;
-                }
-                break;
+        printf("➡️  Input: %s\n", input);
 
-            case STATE_TOKEN:
-                // 空格字符：结束当前参数
-                if (isspace(c)) {
-                    argv[argc][current_pos] = '\0'; // 字符串结束符
-                    argc++;
-                    state = STATE_SPACE;
-                } else {
-                    // 非空格：继续读取参数
-                    if (current_pos < 127) { // 预留结束符位置
-                        argv[argc][current_pos++] = c;
-                    }
-                }
-                break;
+        argc = shell_parse(input, argv);
+
+        if (argc == 0) {
+            printf("⚠️  No valid command parsed.\n\n");
+            continue;
         }
+
+        execute_command(argc, argv);
+        printf("\n");
     }
 
-    // 处理最后一个未结束的参数
-    if (state == STATE_TOKEN && argc < max_argc) {
-        argv[argc][current_pos] = '\0';
-        argc++;
+    fclose(file);
+    return 0;
+}
+
+// shell_parse 和 execute_command 保持不变
+int shell_parse(char *buf, char *argv[])
+{
+    int argc = 0;
+    int state = 0; // 状态机：0=等待参数开始，1=读取参数内容
+    int i = 0;
+
+    // 清空argv数组，防止残留指针导致异常
+    for (int j = 0; j < MAX_ARGS + 1; j++) {
+        argv[j] = NULL;
     }
+
+    // 状态机核心逻辑：遍历字符串解析参数
+    while (buf[i] != '\0' && argc < MAX_ARGS) {
+        if (state == 0) {
+            // 初始状态：跳过空格/制表符，找到参数起始位置
+            if (buf[i] != ' ' && buf[i] != '\t') {
+                argv[argc] = &buf[i]; // 标记当前参数的起始地址
+                argc++;              // 参数计数+1
+                state = 1;           // 切换到"读取参数内容"状态
+            }
+        } else {
+            // 读取参数状态：遇到空格/制表符则终止当前参数
+            if (buf[i] == ' ' || buf[i] == '\t') {
+                buf[i] = '\0';       // 将分隔符替换为字符串结束符
+                state = 0;           // 切回"等待参数开始"状态
+            }
+        }
+        i++; // 遍历下一个字符
+    }
+
+    // 确保最后一个参数正确终止（若字符串结束时仍在读取参数状态）
+    // 补充：argv最后一个元素置NULL（符合命令行参数惯例）
+    argv[argc] = NULL;
 
     return argc;
 }
 
-/**
- * @brief 释放参数数组的内存
- * @param argv 参数数组
- * @param argc 参数个数
- */
-void free_argv(char *argv[], int argc) {
+void execute_command(int argc, char *argv[])
+{
+    printf("Parsing result: Total %d parameters\n", argc);
+
     for (int i = 0; i < argc; i++) {
-        free(argv[i]);
-        argv[i] = NULL;
-    }
-}
-
-/**
- * @brief 处理解析后的命令
- * @param argc 参数个数
- * @param argv 参数数组
- */
-void handle_command(int argc, char *argv[]) {
-    if (argc == 0) {
-        return;
+        printf("Parameter %d: Content: %s, Length: %zu\n",
+               i + 1, argv[i], strlen(argv[i]));
     }
 
-    // 匹配不同命令
-    if (strcmp(argv[0], "add") == 0) {
-        // add命令：解析两个数字并求和
-        if (argc >= 3) {
-            int a = atoi(argv[1]);
-            int b = atoi(argv[2]);
-            printf("%d + %d = %d\n", a, b, a + b);
-        }
+    if (strcmp(argv[0], "help") == 0) {
+        printf("This is help command\n");
     } else if (strcmp(argv[0], "echo") == 0) {
-        // echo命令：输出后续所有参数
         printf("Echo: ");
         for (int i = 1; i < argc; i++) {
             printf("%s ", argv[i]);
         }
-        // 移除末尾空格并换行
-        printf("\b\n");
-    } else if (strcmp(argv[0], "help") == 0) {
-        // help命令：固定输出
-        printf("This is help command\n");
+        printf("\n");
+    } else if (strcmp(argv[0], "add") == 0 && argc == 3) {
+        int a = atoi(argv[1]);
+        int b = atoi(argv[2]);
+        printf("%d + %d = %d\n", a, b, a + b);
     } else {
-        // 通用参数：输出第一个参数信息 + 总参数数
-        if (argc >= 1) {
-            printf("Parameter 1: %s, Length: %zu\n", argv[0], strlen(argv[0]));
-        }
-        // 测试用例中检查"Total 10 parameters"，适配参数数输出
-        if (argc >= 10) {
-            printf("Total %d parameters\n", argc);
-        }
+        printf("Unknown command: %s\n", argv[0]);
     }
-}
-
-int main() {
-    char input[1024];
-    char *argv[64]; // 最多支持64个参数
-    int argc;
-
-    // 读取标准输入（测试框架会传入测试用例）
-    if (fgets(input, sizeof(input), stdin) == NULL) {
-        return 1;
-    }
-
-    // 解析命令行参数
-    argc = shell_parse(input, argv, 64);
-
-    // 处理命令
-    handle_command(argc, argv);
-
-    // 释放内存
-    free_argv(argv, argc);
-
-    return 0;
 }

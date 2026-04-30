@@ -12,9 +12,16 @@ typedef struct {
 
 Student students[MAX_STUDENTS];
 int n;
+
 int linear_search(const char *target_name) {
-    // TODO: 在这里添加你的代码
-    // I AM NOT DONE
+    // 线性查找核心逻辑：遍历数组逐个比较姓名
+    for (int i = 0; i < n; i++) {
+        // strcmp返回0表示两个字符串完全相等
+        if (strcmp(students[i].name, target_name) == 0) {
+            return i; // 找到目标，返回对应索引
+        }
+    }
+    return -1; // 遍历完未找到，返回-1作为未找到标识
 }
 
 int main(void) {

@@ -7,13 +7,9 @@ OBJS := $(SRCS:.c=.o)
 
 all: $(TARGET)
 
-# 补全编译规则：链接目标文件生成可执行程序
+# 补全：生成可执行文件的规则
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
-
-# 补全编译规则：编译.c文件为.o文件
-%.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
 	rm -f $(OBJS) $(TARGET)

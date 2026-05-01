@@ -28,7 +28,7 @@ int main() {
 
   FILE* file = fopen("text.txt", "r");
   if (file == NULL) {
-    fprintf(stderr, "无法打开文件 dict.txt。\n");
+    fprintf(stderr, "无法打开文件 text.txt。\n"); // 修正原代码的笔误（dict.txt→text.txt）
     free_hash_table(table);
     return 1;
   }
@@ -42,10 +42,25 @@ int main() {
     }
 
     // 使用 strtok 按空格分割单词
-    // TODO: 在这里添加你的代码
-    // I AM NOT DONE
+    char *word = strtok(line, " ");
+    while (word != NULL) {
+      // 转小写（保证查找不区分大小写）
+      to_lowercase(word);
+      // 查找翻译
+      const char *translation = hash_table_lookup(table, word);
+      // 严格匹配测试用例的输出格式
+      printf("原文: %s\t", word);
+      if (translation) {
+          printf("翻译: %s\n", translation);
+      } else {
+          printf("未找到该单词的翻译。\n");
+      }
+
+      word = strtok(NULL, " ");
+    }
   }
 
+  fclose(file); // 补充关闭文件
   free_hash_table(table);
   return 0;
 }

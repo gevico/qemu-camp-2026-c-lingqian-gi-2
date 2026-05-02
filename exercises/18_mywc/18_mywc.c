@@ -1,12 +1,10 @@
 #include "mywc.h"
+#include <stdio.h>
 
+// I AM NOT DONE
 int main(int argc, char *argv[]) {
-    // 默认处理 text.txt，也支持命令行参数指定文件
-    const char *filename = "text.txt";
-    if (argc > 1) {
-        filename = argv[1];
-    }
+  const char* filepath = "./text.txt";
 
-    process_file(filename);
-    return 0;
+  process_file(filepath);
+  return 0;
 }

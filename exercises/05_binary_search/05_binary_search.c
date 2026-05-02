@@ -15,30 +15,8 @@ Student students[MAX_STUDENTS];
 int n;
 
 int binary_search(const char *target_name) {
-    int low = 0;
-    int high = n - 1;
-
-    // 二分查找核心逻辑
-    while (low <= high) {
-        // 计算中间索引（避免 low+high 溢出）
-        int mid = low + (high - low) / 2;
-        // 比较目标姓名和中间位置的姓名（字典序）
-        int cmp_result = strcmp(students[mid].name, target_name);
-
-        if (cmp_result == 0) {
-            // 找到目标，返回索引
-            return mid;
-        } else if (cmp_result < 0) {
-            // 中间姓名字典序小于目标，目标在右半区
-            low = mid + 1;
-        } else {
-            // 中间姓名字典序大于目标，目标在左半区
-            high = mid - 1;
-        }
-    }
-
-    // 未找到目标
-    return -1;
+    // TODO: 在这里添加你的代码
+    // I AM NOT DONE
 }
 
 int main(void) {

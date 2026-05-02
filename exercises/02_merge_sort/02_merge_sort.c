@@ -14,46 +14,8 @@ Student students[MAX_STUDENTS];
 Student temp[MAX_STUDENTS];
 
 void merge_sort(int left, int right) {
-    // 递归终止条件：子数组只有1个或0个元素时无需排序
-    if (left >= right) {
-        return;
-    }
-
-    // 1. 拆分：找到中间点，将数组分为左右两部分
-    int mid = left + (right - left) / 2; // 避免(left+right)溢出
-
-    // 2. 递归排序左半部分和右半部分
-    merge_sort(left, mid);
-    merge_sort(mid + 1, right);
-
-    // 3. 合并：将两个有序子数组合并为一个有序数组（降序）
-    int i = left;    // 左子数组起始索引
-    int j = mid + 1; // 右子数组起始索引
-    int k = left;    // 临时数组temp的起始索引
-
-    // 比较左右子数组元素，按成绩降序放入临时数组
-    while (i <= mid && j <= right) {
-        if (students[i].score >= students[j].score) {
-            temp[k++] = students[i++];
-        } else {
-            temp[k++] = students[j++];
-        }
-    }
-
-    // 复制左子数组剩余元素到临时数组
-    while (i <= mid) {
-        temp[k++] = students[i++];
-    }
-
-    // 复制右子数组剩余元素到临时数组
-    while (j <= right) {
-        temp[k++] = students[j++];
-    }
-
-    // 将临时数组中排序好的内容复制回原数组
-    for (int idx = left; idx <= right; idx++) {
-        students[idx] = temp[idx];
-    }
+    // TODO: 在这里添加你的代码
+    // I AM NOT DONE
 }
 
 int main(void) {

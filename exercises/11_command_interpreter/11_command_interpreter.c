@@ -56,37 +56,12 @@ int main(void)
 int shell_parse(char *buf, char *argv[])
 {
     int argc = 0;
-    int state = 0; // 状态机：0=等待参数开始，1=读取参数内容
-    int i = 0;
-
-    // 清空argv数组，防止残留指针导致异常
-    for (int j = 0; j < MAX_ARGS + 1; j++) {
-        argv[j] = NULL;
-    }
-
-    // 状态机核心逻辑：遍历字符串解析参数
-    while (buf[i] != '\0' && argc < MAX_ARGS) {
-        if (state == 0) {
-            // 初始状态：跳过空格/制表符，找到参数起始位置
-            if (buf[i] != ' ' && buf[i] != '\t') {
-                argv[argc] = &buf[i]; // 标记当前参数的起始地址
-                argc++;              // 参数计数+1
-                state = 1;           // 切换到"读取参数内容"状态
-            }
-        } else {
-            // 读取参数状态：遇到空格/制表符则终止当前参数
-            if (buf[i] == ' ' || buf[i] == '\t') {
-                buf[i] = '\0';       // 将分隔符替换为字符串结束符
-                state = 0;           // 切回"等待参数开始"状态
-            }
-        }
-        i++; // 遍历下一个字符
-    }
-
-    // 确保最后一个参数正确终止（若字符串结束时仍在读取参数状态）
-    // 补充：argv最后一个元素置NULL（符合命令行参数惯例）
-    argv[argc] = NULL;
-
+    int state = 0;
+    // TODO: 在这里添加你的代码，完成命令行解析
+    // 功能：将输入字符串buf按空格分割成多个参数，存入argv数组
+    // 返回：参数个数argc
+    // 提示：使用状态机的方式处理，注意处理字符串结束符
+    // I AM NOT DONE
     return argc;
 }
 

@@ -10,48 +10,14 @@
 
 /* 判断字符 c 是否在分隔符集合 delim 中 */
 static int is_delim(char c, const char *delim) {
-    while (*delim) {
-        if (c == *delim++) {
-            return 1;
-        }
-    }
-    return 0;
+    // TODO: 在这里添加你的代码
+    // I AM NOT DONE
 }
 
 /* 线程安全版本：通过 saveptr 维护调用状态，不使用静态变量 */
 char *strtok_r(char *str, const char *delim, char **saveptr) {
-    char *start, *end;
-    
-    // 第一次调用时，使用传入的 str
-    // 后续调用时，使用 saveptr 保存的位置
-    start = str ? str : *saveptr;
-    
-    // 跳过开头的分隔符
-    while (*start && is_delim(*start, delim)) {
-        start++;
-    }
-    
-    // 如果已经到达字符串末尾，返回 NULL
-    if (!*start) {
-        *saveptr = start;
-        return NULL;
-    }
-    
-    // 找到当前 token 的结束位置
-    end = start + 1;
-    while (*end && !is_delim(*end, delim)) {
-        end++;
-    }
-    
-    // 如果不是字符串末尾，将结束位置设置为 '\0'，并保存下一次的起始位置
-    if (*end) {
-        *end = '\0';
-        *saveptr = end + 1;
-    } else {
-        *saveptr = end;
-    }
-    
-    return start;
+    // TODO: 在这里添加你的代码
+    // I AM NOT DONE
 }
 
 int main(void) {

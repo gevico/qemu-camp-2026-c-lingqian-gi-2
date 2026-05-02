@@ -20,14 +20,8 @@ typedef struct {
 
 // djb2哈希函数
 unsigned long djb2_hash(const char *str) {
-    unsigned long hash = 5381;
-    int c;
-    
-    while ((c = *str++)) {
-        hash = ((hash << 5) + hash) + c; // hash * 33 + c
-    }
-    
-    return hash;
+    // TODO: 在这里添加你的代码
+    // I AM NOT DONE
 }
 
 // 创建哈希表
@@ -42,38 +36,14 @@ HashTable *create_hash_table(int size) {
 void hash_table_insert(HashTable *ht, const char *word) {
     unsigned long hash = djb2_hash(word) % ht->size;
 
-    HashNode *current = ht->table[hash];
-    
-    // 检查单词是否已存在
-    while (current != NULL) {
-        if (strcmp(current->word, word) == 0) {
-            current->count++;
-            return;
-        }
-        current = current->next;
-    }
-    
-    // 单词不存在，创建新节点
-    HashNode *new_node = malloc(sizeof(HashNode));
-    new_node->word = malloc(strlen(word) + 1);
-    strcpy(new_node->word, word);
-    new_node->count = 1;
-    new_node->next = ht->table[hash];
-    ht->table[hash] = new_node;
+    // TODO: 在这里添加你的代码
+    // I AM NOT DONE
 }
 
 // 从哈希表中获取所有单词及其计数
 void get_all_words(HashTable *ht, HashNode **nodes, int *count) {
-    *count = 0;
-    
-    for (int i = 0; i < ht->size; i++) {
-        HashNode *current = ht->table[i];
-        while (current != NULL) {
-            nodes[*count] = current;
-            (*count)++;
-            current = current->next;
-        }
-    }
+    // TODO: 在这里添加你的代码
+    // I AM NOT DONE
 }
 
 // 比较函数用于排序
@@ -81,12 +51,9 @@ int compare_nodes(const void *a, const void *b) {
     HashNode *node_a = *(HashNode **)a;
     HashNode *node_b = *(HashNode **)b;
     
-    // 先按计数降序
-    if (node_a->count != node_b->count) {
-        return node_b->count - node_a->count;
-    }
-    // 再按字母升序
-    return strcmp(node_a->word, node_b->word);
+    // 先按计数降序，再按字母升序
+    // TODO: 在这里添加你的代码
+    // I AM NOT DONE
 }
 
 // 释放哈希表内存
@@ -106,33 +73,8 @@ void free_hash_table(HashTable *ht) {
 
 // 从字符串中获取下一个单词
 char *get_next_word(const char **text) {
-    // 跳过非字母字符
-    while (**text && !isalpha(**text)) {
-        (*text)++;
-    }
-    
-    if (!**text) {
-        return NULL;
-    }
-    
-    const char *start = *text;
-    
-    // 收集字母字符
-    while (**text && isalpha(**text)) {
-        (*text)++;
-    }
-    
-    int length = *text - start;
-    char *word = malloc(length + 1);
-    strncpy(word, start, length);
-    word[length] = '\0';
-    
-    // 转换为小写
-    for (int i = 0; i < length; i++) {
-        word[i] = tolower(word[i]);
-    }
-    
-    return word;
+    // TODO: 在这里添加你的代码
+    // I AM NOT DONE
 }
 
 int main(int argc, char *argv[]) {
@@ -175,9 +117,8 @@ int main(int argc, char *argv[]) {
     printf("%-20s %s\n", "单词", "出现次数");
     printf("-------------------- ----------\n");
     for (int i = 0; i < node_count; i++) {
-        printf("%s:%d ", nodes[i]->word, nodes[i]->count);
+        printf("%s:%d\n", nodes[i]->word, nodes[i]->count);
     }
-    printf("\n");
     
     // 释放内存
     free(nodes);

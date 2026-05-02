@@ -13,43 +13,8 @@ typedef struct {
 Student students[MAX_STUDENTS];
 
 void quick_sort(int left, int right) {
-    // 递归终止条件：左边界 >= 右边界
-    if (left >= right) {
-        return;
-    }
-
-    // 选择中间位置的元素作为基准值（成绩）
-    int pivot = students[(left + right) / 2].score;
-    int i = left, j = right;
-
-    // 分区操作：将比基准成绩高的放左边，低的放右边
-    while (i <= j) {
-        // 找左侧第一个 <= 基准成绩的元素（降序，需移到右侧）
-        while (students[i].score > pivot) {
-            i++;
-        }
-        // 找右侧第一个 >= 基准成绩的元素（降序，需移到左侧）
-        while (students[j].score < pivot) {
-            j--;
-        }
-
-        // 交换两个元素
-        if (i <= j) {
-            Student temp = students[i];
-            students[i] = students[j];
-            students[j] = temp;
-            i++;
-            j--;
-        }
-    }
-
-    // 递归处理左半区和右半区
-    if (left < j) {
-        quick_sort(left, j);
-    }
-    if (i < right) {
-        quick_sort(i, right);
-    }
+    // TODO: 在这里添加你的代码
+    // I AM NOT DONE
 }
 
 int main(void) {

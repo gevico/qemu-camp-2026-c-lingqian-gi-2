@@ -86,7 +86,7 @@ int main() {
         printf("💡 提示: 请确保程序对每个输入的单词，按照如下格式输出翻译或未找到提示：\n");
         printf("         - 原文: <word>      翻译: <translation内容>\n");
         printf("         - 原文: <word>  未找到该单词的翻译。\n");
-        printf("         并且必须严格匹配上述 7 个示例中的字符串（1包括空格与标点）。\n");
+        printf("         并且必须严格匹配上述 7 个示例中的字符串（包括空格与标点）。\n");
         strncpy(g_current_exercise.program_output, output, sizeof(g_current_exercise.program_output) - 1);
     }
 
